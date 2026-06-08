@@ -1,0 +1,11 @@
+# Files
+credentials.json
+token_drive_v3.pickle
+google_drive/__init__.py
+webapp/__init__.py
+
+# Folders
+google_drive/recordings/
+
+# Python
+__pycache__/

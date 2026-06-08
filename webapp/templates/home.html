@@ -1,13 +1,15 @@
-<!DOCTYPE html> 
-<html>
-    <head>
-        <title>FastAPI test</title>
-    </head>
-    <body>
-        <h1>Python Sound Recording System</h1>
-        {% for header in headers %}
-            <h2>{{ header.title }}</h2>
-            <p>{{ header.subheader }}</p>
-        {% endfor %}
-    </body>
-</html>
+{% extends "layout.html" %}
+{% block content %}
+    {% for header in headers %}
+        <h2>{{ header.title }}</h2>
+        <p>{{ header.subheader }}</p>
+
+        {% if header.title == "Recordings" %}
+            <ul> <!-- displaying names -->
+                {% for x in test %}
+                    <li>{{x}}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endfor %}
+{% endblock content %}

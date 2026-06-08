@@ -1,0 +1,50 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Navbar */
+nav {
+    background-color: #333;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+nav .brand {
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 16px 0;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 8px;
+}
+
+nav ul li a {
+    color: #ccc;
+    text-decoration: none;
+    padding: 16px 12px;
+    display: block;
+    transition: color 0.2s;
+}
+
+nav ul li a:hover {
+    color: #fff;
+}
+
+nav ul li a.active {
+    color: #fff;
+    border-bottom: 3px solid #fff;
+}

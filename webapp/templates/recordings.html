@@ -1,0 +1,6 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% for header in headers %}
+        <h2>{{ header.title }}</h2>
+    {% endfor %}
+{% endblock content %}
