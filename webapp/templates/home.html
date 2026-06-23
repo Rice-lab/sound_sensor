@@ -1,15 +1,20 @@
 {% extends "layout.html" %}
 {% block content %}
-    {% for header in headers %}
-        <h2>{{ header.title }}</h2>
-        <p>{{ header.subheader }}</p>
+    <h1><a href="/recordings">Recordings</a></h1>
+    <p class="section-subtitle">
+        Play the most recent recordings here. Click on "Recordings" if you want to view more!
+    </p>
 
-        {% if header.title == "Recordings" %}
-            <ul> <!-- displaying names -->
-                {% for x in test %}
-                    <li>{{x}}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endfor %}
+    <div class="recordings-list">
+        {% for recording in recent_files %}
+        <div class="recording-item">
+            <!-- preload makes it so that the audio endpoints aren't hit until the user clicks play-->
+            <audio controls preload="none" src="/api/audio/{{ recording.id }}"></audio>
+            <span>{{ recording.name }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h1>Analytics</h1>
+    <p>Uses AI to parse information from metadata</p>
 {% endblock content %}
