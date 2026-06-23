@@ -3,7 +3,8 @@
 #===========================#
 # Contains all the functions that use the Google Drive API
 import os
-from googleapiclient.http import MediaFileUpload
+from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
+from io import BytesIO
 
 # Import Create_Service from the local package module
 from .Google import Create_Service
@@ -68,8 +69,10 @@ def list_most_recent(n):
     files = response.get('files', [])
     nextPageToken = response.get('nextPageToken')
 
+    # returns null if there is only one page of recordings
     while nextPageToken:
-        response = service.files().list(q=query, pageToken=nextPageToken).execute()
+        response = service.files().list(q=query, pageToken=nextPageToken, 
+                                        fields="files(id, name, createdTime)").execute()
         files.extend(response.get('files'))
         nextPageToken= response.get('nextPageToken')
 
@@ -78,12 +81,31 @@ def list_most_recent(n):
 
     # get the 3 most recent files
     recent_files = sorted_files[:n]
-    test = []
+    # test = []
 
-    for files in recent_files:
-        test.append(files['name'])
+    # for files in recent_files:
+    #     test.append(files['name'])
         
     # return a list of the desired number of files 
-    return test
+    return recent_files
 
 
+# BytesIO is an in-memory buffer, it's a temporary container that holds the downloaded bytes in RAM 
+# so StreamingResponse can read from it and forward them to the browser.
+def get_file_stream(file_id):
+    buffer = BytesIO()
+    request = service.files().get_media(fileId=file_id)
+
+    # a Drive API helper that handles the downloading, writing chunks into the buffer as they arrive
+    downloader = MediaIoBaseDownload(buffer, request)
+
+    done = False
+    while not done:
+        # _, discards the progress status (don't need it here)
+        _, done = downloader.next_chunk()
+
+    # buffer cursor is at the end after writing, puts it back to the start so that StreamingResponse
+    # reads it from the start
+    buffer.seek(0)
+    return buffer
+    
