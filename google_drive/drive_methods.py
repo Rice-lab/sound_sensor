@@ -89,7 +89,32 @@ def list_most_recent(n):
     # return a list of the desired number of files 
     return recent_files
 
+#===========================# 
+# Files From a Specific Day #
+#===========================#
+# Returns all the files with the same creation date 
+def recordings_on_day(creation_date):
+    # creation_date should be a string like "2026-06-15"
+    start = f"{creation_date}T00:00:00"
+    end = f"{creation_date}T23:59:59"
+    
+    query = f"parents = '{folder_id}' and createdTime >= '{start}' and createdTime <= '{end}'"
+    response = service.files().list(q=query, fields="files(id, name, createdTime)").execute()
+    files = response.get('files', [])
 
+    nextPageToken = response.get('nextPageToken')
+    while nextPageToken:
+        response = service.files().list(q=query, pageToken=nextPageToken,
+                                        fields="files(id, name, createdTime)").execute()
+        files.extend(response.get('files'))
+        nextPageToken = response.get('nextPageToken')
+
+    return files
+
+#===========================# 
+# Files From a Specific Day #
+#===========================#
+# Middleman that makes a Google Drive API call to download the .wav file content
 # BytesIO is an in-memory buffer, it's a temporary container that holds the downloaded bytes in RAM 
 # so StreamingResponse can read from it and forward them to the browser.
 def get_file_stream(file_id):

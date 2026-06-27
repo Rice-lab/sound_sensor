@@ -1,8 +1,8 @@
 # Testing file uploads - Works!
 from .Google import Create_Service
 from googleapiclient.http import MediaFileUpload
-from .drive_methods import list_most_recent, get_file_stream
-
+from .drive_methods import file_upload, list_most_recent, get_file_stream
+from .drive_methods import recordings_on_day
 CLIENT_SECRET_FILE = './google_drive/credentials.json'
 API_NAME = 'drive'
 API_VERSION = 'v3'
@@ -75,13 +75,16 @@ folder_id = '1APyRc2jRlgCXxGahNn2NbBI2EJf-2fEe'
 # for f in files:
 #     print(f['name'], f['mimeType'])
 
-test = list_most_recent(1)
+# test = list_most_recent(1)
 # for x in test:
 #     print(x)
 
-file_id = test[0]['id']
-buffer = get_file_stream(file_id)
-with open("test_output.wav", "wb") as f:
-    f.write(buffer.read())
+# file_id = test[0]['id']
+# buffer = get_file_stream(file_id)
+# with open("test_output.wav", "wb") as f:
+#     f.write(buffer.read())
 
-print("Done")
+# print("Done")
+
+test = recordings_on_day("2026-05-26")
+print(test)

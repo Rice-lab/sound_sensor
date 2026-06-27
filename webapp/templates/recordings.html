@@ -1,4 +1,54 @@
 {% extends "layout.html" %}
 {% block content %}
     
+<!-- dropdown list for month choosing-->
+<label for="month">Choose a month:</label>    
+<select name="months" id="months" onchange="changeMonth(this)">
+    <!-- make it so the current month cannot be clicked on the dropdown since we're already there-->
+    {% for m in ["January","February","March","April","May","June",
+                 "July","August","September","October","November","December"] %}
+        <option value="{{ loop.index }}" {% if m == month_name %}selected disabled{%endif %}>{{ m }}</option>
+    {% endfor %}
+</select>
+
+<script>
+    function changeMonth(select) {
+    const month = select.value;
+    window.location.href = `/recordings/?month=${month}&year={{ year }}`;
+}
+</script>
+
+<!-- actual calendar -->
+<div class="cal-wrap">
+  <div class="cal-header">
+    <span class="cal-title">{{ month_name }} {{ year }}</span>
+  </div>
+
+  <table class="cal-grid">
+    <thead>
+      <tr>
+        <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th>
+        <th>Thu</th><th>Fri</th><th>Sat</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for week in calendar %}
+      <tr>
+        {% for day in week %}
+          <td>
+            {% if day == 0 %}
+              <span class="empty"></span>
+            {% else %}
+              <a href="/recordings/{{year}}/{{month}}/{{day}}" class="day-btn {% if day == today %}today{% endif %}">
+                {{ day }}
+              </a>
+            {% endif %}
+          </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+   
 {% endblock content %}

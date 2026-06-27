@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>{{ title }}</h1>
+    {% for file in files %}
+            <div class="recording-item">
+            <audio controls preload="none" src="/api/audio/{{ file.id }}"></audio>
+            <span>{{ file.name }}</span>
+        </div>
+    {% endfor %}
+
+{% endblock content %}
