@@ -10,7 +10,7 @@ from fastapi.responses import StreamingResponse
 
 # Extra Imports
 from pathlib import Path
-from google_drive.drive_methods import list_most_recent, get_file_stream
+from google_drive.drive_methods import list_most_recent, get_file_stream, recordings_on_day
 from datetime import date
 import calendar
 
@@ -35,17 +35,32 @@ def home(request: Request):
 # temporarily we'll have 2 directories from home: Recordings and Analytics
 # can add more if need be
 @app.get("/recordings", include_in_schema=False)
-def recordings(request: Request):
+def recordings(request: Request, month: int=None, year: int=None):
     # Upon landing, we want the user to have the current month's calendar open
     # We'll only worry about one year worth of recordings
     today  = date.today()
-    year = today.year
-    month = today.month
-    cal = calendar.monthcalendar(year, month)
+    year = year or today.year
+    month = month or today.month
+    cal = calendar.Calendar(firstweekday=6).monthdayscalendar(year, month)
+    month_name = calendar.month_name[month]
     
     return templates.TemplateResponse(request, 
                                       "recordings.html", 
-                                      {"title": "Recordings"},)
+                                      {"title": "Recordings",
+                                       "calendar": cal,
+                                       "year": year,
+                                       "month": month,
+                                       "month_name": month_name},)
+
+# Returns all the recordings for the day the user clicks on in the calendar
+@app.get("/recordings/{year}/{month}/{day}", include_in_schema=False)
+def day_recordings(request: Request, year: str, month: str, day: str):
+    clicked_date = year + "-" + month + "-" + day
+    files = recordings_on_day(clicked_date)
+    return templates.TemplateResponse(request,
+                                      "recordings_onDay.html",
+                                      {"title": clicked_date,
+                                       "files": files},)
 
 @app.get("/analytics", include_in_schema=False)
 def analytics(request: Request):
@@ -58,9 +73,9 @@ def analytics(request: Request):
 #       API Endpoints       #
 #===========================#
 # API Directories (json)
-
 # Fetching the recordings
 @app.get("/api/audio/{file_id}")
 def play_recordings(file_id: str):
     buffer = get_file_stream(file_id)
     return StreamingResponse(buffer, media_type="audio/wav")
+
